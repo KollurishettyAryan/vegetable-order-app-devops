@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+  vegetable-app:
+    build: .
+    image: vegetable-app:latest
+    container_name: vegetable-app
+    ports:
+      - "3000:3000"
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/vegetabledb
+    networks:
+      - vegetable-order-network
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    networks:
+      - vegetable-order-network
+
+networks:
+  vegetable-order-network:
+    name: vegetable-order-network
+    driver: bridge
