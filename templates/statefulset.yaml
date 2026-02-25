@@ -1,40 +1,40 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: vegetable-mongodb
+  name: {{ .Release.Name }}-mongodb
   namespace: {{ .Values.namespace }}
 spec:
-  serviceName: mongodb
+  serviceName: {{ .Values.mongodb.name }}
   replicas: {{ .Values.mongodb.replicas }}
   selector:
     matchLabels:
-      app: mongodb
+      app: {{ .Values.mongodb.labels.app }}
   template:
     metadata:
       labels:
-        app: mongodb
+        app: {{ .Values.mongodb.labels.app }}
     spec:
       containers:
-        - name: mongodb
-          image: {{ .Values.mongodb.image }}
-          ports:
-            - containerPort: {{ .Values.mongodb.port }}
-          volumeMounts:
-            - name: mongo-data
-              mountPath: /data/db
-          env:
-            - name: MONGO_INITDB_DATABASE
-              valueFrom:
-                configMapKeyRef:
-                  name: vegetable-config
-                  key: MONGO_INITDB_DATABASE
+      - name: {{ .Values.mongodb.name }}
+        image: "{{ .Values.mongodb.image.repository }}:{{ .Values.mongodb.image.tag }}"
+        ports:
+        - containerPort: {{ .Values.mongodb.port }}
+        volumeMounts:
+        - name: mongo-data
+          mountPath: /data/db
+        env:
+        - name: MONGO_INITDB_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-config
+              key: MONGO_INITDB_DATABASE
   volumeClaimTemplates:
-    - metadata:
-        name: mongo-data
-      spec:
-        accessModes:
-          - ReadWriteOnce
-        storageClassName: {{ .Values.storage.className }}
-        resources:
-          requests:
-            storage: {{ .Values.storage.size }}
+  - metadata:
+      name: mongo-data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      storageClassName: {{ .Values.storage.className }}
+      resources:
+        requests:
+          storage: {{ .Values.storage.size }}

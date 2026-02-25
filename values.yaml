@@ -1,37 +1,38 @@
-#NAME_SPACE
-
 namespace: vegetable-ns
 
-#Deployment
-app:
+image:
+  repository: aryankollurishetty/vegetable-app
+  tag: v1.0
+
+deployment:
   name: vegetable
-  image: aryankollurishetty/vegetable-app:v1.0
   replicas: 1
-  containerPort: 3000
+  port: 3000
+  labels:
+    app: vegetable
 
-
-#Service
 service:
   name: vegetable-service
   type: LoadBalancer
   port: 80
   targetPort: 3000
+  labels:
+    app: vegetable
 
-
-#Config_File
 config:
   mongodbUri: mongodb://mongodb:27017/vegetable
   mongoInitDb: vegetable
 
-
-#MongoDB
 mongodb:
-  image: mongo:latest
+  name: mongodb
+  image:
+    repository: mongo
+    tag: latest
   replicas: 1
   port: 27017
+  labels:
+    app: mongodb
 
-
-#Storage_class
 storage:
   className: vegetable-sc
   type: gp3
