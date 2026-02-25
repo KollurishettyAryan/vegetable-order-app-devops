@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: vegetable-mongodb
+  namespace: {{ .Values.namespace }}
+spec:
+  serviceName: mongodb
+  replicas: {{ .Values.mongodb.replicas }}
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+        - name: mongodb
+          image: {{ .Values.mongodb.image }}
+          ports:
+            - containerPort: {{ .Values.mongodb.port }}
+          volumeMounts:
+            - name: mongo-data
+              mountPath: /data/db
+          env:
+            - name: MONGO_INITDB_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: vegetable-config
+                  key: MONGO_INITDB_DATABASE
+  volumeClaimTemplates:
+    - metadata:
+        name: mongo-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: {{ .Values.storage.className }}
+        resources:
+          requests:
+            storage: {{ .Values.storage.size }}
