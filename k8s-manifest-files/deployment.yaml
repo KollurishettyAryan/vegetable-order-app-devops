@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vegetable-app
+  namespace: vegetable-ns
+  labels:
+    app: vegetable
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vegetable
+  template:
+    metadata:
+      labels:
+        app: vegetable
+    spec:
+      containers:
+        - name: vegetable-container
+          image: aryankollurishetty/vegetable-app:v1.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+          env:
+            - name: MONGODB_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: vegetable-config
+                  key: MONGODB_URI

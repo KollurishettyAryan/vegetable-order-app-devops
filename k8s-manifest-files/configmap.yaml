@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vegetable-config
+  namespace: vegetable-ns
+data:
+  MONGODB_URI: mongodb://mongodb:27017/vegetable
